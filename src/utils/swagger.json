@@ -3,28 +3,39 @@
   "info": {
     "title": "VUMI - Komiku Rest API",
     "version": "1.0.0",
-    "description": "API Backend untuk Aplikasi Comic Reader Vumi. Dikembangkan oleh Kibbz Skibidi.",
+    "description": "API Backend yang dioptimasi untuk Aplikasi Comic Reader Vumi. Dikembangkan dengan Node.js dan Express oleh Sakib Faturrahman.",
     "contact": {
-      "name": "Kibbz Skibidi",
-      "url": "https://sakibdev.my.id"
+      "name": "Sakib Faturrahman",
+      "url": "https://sakibdev.my.id",
+      "email": "sakib@example.com"
     }
   },
   "servers": [
     {
+      "url": "https://api-vumi-scrap.vercel.app",
+      "description": "Production Server (Vercel)"
+    },
+    {
       "url": "http://localhost:3001",
-      "description": "Development Server"
+      "description": "Local Development Server"
     }
   ],
   "tags": [
-    { "name": "Main", "description": "Endpoint utama untuk landing page" },
+    {
+      "name": "Main",
+      "description": "Endpoint utama untuk konten landing page dan pencarian"
+    },
     {
       "name": "Manga Details",
-      "description": "Informasi detail dan pembacaan chapter"
+      "description": "Informasi mendalam mengenai komik dan konten pembacaan chapter"
     },
-    { "name": "Exploration", "description": "Pencarian, Genre, dan Pustaka" },
+    {
+      "name": "Exploration",
+      "description": "Fitur penelusuran melalui Genre, Pustaka, dan filter Komik Berwarna"
+    },
     {
       "name": "Popular",
-      "description": "Komik sedang tren berdasarkan kategori"
+      "description": "Daftar komik yang sedang tren berdasarkan kategori spesifik"
     }
   ],
   "paths": {
@@ -32,75 +43,116 @@
       "get": {
         "tags": ["Main"],
         "summary": "Daftar komik terbaru",
-        "responses": { "200": { "description": "OK" } }
+        "description": "Mengambil daftar komik yang baru saja diperbarui di server Komiku.",
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan daftar komik terbaru"
+          }
+        }
       }
     },
     "/api/vumi/rekomendasi": {
       "get": {
         "tags": ["Main"],
         "summary": "Daftar rekomendasi pilihan",
-        "responses": { "200": { "description": "OK" } }
+        "description": "Mengambil daftar komik yang direkomendasikan secara editor.",
+        "responses": {
+          "200": {
+            "description": "Berhasil mendapatkan rekomendasi"
+          }
+        }
       }
     },
     "/api/vumi/search": {
       "get": {
         "tags": ["Main"],
         "summary": "Pencarian komik",
+        "description": "Mencari komik berdasarkan kata kunci judul.",
         "parameters": [
           {
             "name": "q",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" },
-            "example": "solo leveling"
+            "schema": {
+              "type": "string"
+            },
+            "example": "solo leveling",
+            "description": "Kata kunci pencarian"
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "Hasil pencarian ditemukan"
+          }
+        }
       }
     },
     "/api/vumi/detail-komik/{slug}": {
       "get": {
         "tags": ["Manga Details"],
         "summary": "Detail informasi komik",
+        "description": "Mengambil metadata lengkap, sinopsis, dan daftar chapter dari komik tertentu.",
         "parameters": [
           {
             "name": "slug",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" },
-            "example": "bocchi-the-rock"
+            "schema": {
+              "type": "string"
+            },
+            "example": "bocchi-the-rock",
+            "description": "Identifier unik komik"
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "Detail komik berhasil dimuat"
+          }
+        }
       }
     },
     "/api/vumi/baca-chapter/{slug}/{chapter}": {
       "get": {
         "tags": ["Manga Details"],
         "summary": "Konten gambar per chapter",
+        "description": "Mengambil seluruh gambar dari chapter komik yang dipilih.",
         "parameters": [
           {
             "name": "slug",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            },
+            "description": "Slug komik"
           },
           {
             "name": "chapter",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" },
-            "example": "01"
+            "schema": {
+              "type": "string"
+            },
+            "example": "01",
+            "description": "Nomor atau identitas chapter"
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "Gambar chapter berhasil dimuat"
+          }
+        }
       }
     },
     "/api/vumi/genre-all": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Semua daftar genre",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "Daftar genre tersedia"
+          }
+        }
       }
     },
     "/api/vumi/genre/{slug}": {
@@ -112,11 +164,17 @@
             "name": "slug",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "example": "action"
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/genre/{slug}/{page}": {
@@ -128,30 +186,47 @@
             "name": "slug",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": {
+              "type": "integer"
+            },
+            "example": 2
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/genre-rekomendasi": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Genre yang direkomendasikan",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/berwarna": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Daftar komik berwarna (Halaman 1)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/berwarna/page/{page}": {
@@ -163,45 +238,72 @@
             "name": "page",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": {
+              "type": "integer"
+            },
+            "example": 2
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/komik-populer/all": {
       "get": {
         "tags": ["Popular"],
         "summary": "Semua komik terpopuler",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/komik-populer/manga": {
       "get": {
         "tags": ["Popular"],
         "summary": "Manga terpopuler",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/komik-populer/manhwa": {
       "get": {
         "tags": ["Popular"],
         "summary": "Manhwa terpopuler",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/komik-populer/manhua": {
       "get": {
         "tags": ["Popular"],
         "summary": "Manhua terpopuler",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/pustaka": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Daftar pustaka komik (Halaman 1)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/vumi/pustaka/page/{page}": {
@@ -213,10 +315,17 @@
             "name": "page",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": {
+              "type": "integer"
+            },
+            "example": 2
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     }
   }
