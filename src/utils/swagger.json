@@ -3,56 +3,220 @@
   "info": {
     "title": "VUMI - Komiku Rest API",
     "version": "1.0.0",
-    "description": "Dokumentasi API untuk Aplikasi Reader Vumi"
+    "description": "API Backend untuk Aplikasi Comic Reader Vumi. Dikembangkan oleh Kibbz Skibidi.",
+    "contact": {
+      "name": "Kibbz Skibidi",
+      "url": "https://sakibdev.my.id"
+    }
   },
   "servers": [
     {
       "url": "http://localhost:3001",
-      "description": "Local Server"
+      "description": "Development Server"
+    }
+  ],
+  "tags": [
+    { "name": "Main", "description": "Endpoint utama untuk landing page" },
+    {
+      "name": "Manga Details",
+      "description": "Informasi detail dan pembacaan chapter"
+    },
+    { "name": "Exploration", "description": "Pencarian, Genre, dan Pustaka" },
+    {
+      "name": "Popular",
+      "description": "Komik sedang tren berdasarkan kategori"
     }
   ],
   "paths": {
     "/api/v1/terbaru": {
       "get": {
         "tags": ["Main"],
-        "summary": "Ambil daftar komik terbaru",
-        "responses": {
-          "200": { "description": "Berhasil mengambil data" }
-        }
+        "summary": "Daftar komik terbaru",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/rekomendasi": {
+      "get": {
+        "tags": ["Main"],
+        "summary": "Daftar rekomendasi pilihan",
+        "responses": { "200": { "description": "OK" } }
       }
     },
     "/api/v1/search": {
       "get": {
         "tags": ["Main"],
-        "summary": "Cari manga berdasarkan keyword",
+        "summary": "Pencarian komik",
         "parameters": [
           {
             "name": "q",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": { "type": "string" },
+            "example": "solo leveling"
           }
         ],
-        "responses": {
-          "200": { "description": "Berhasil" }
-        }
+        "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/genre/{slug}": {
+    "/api/v1/detail-komik/{slug}": {
       "get": {
-        "tags": ["Genre"],
-        "summary": "List komik berdasarkan genre",
+        "tags": ["Manga Details"],
+        "summary": "Detail informasi komik",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "bocchi-the-rock"
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/baca-chapter/{slug}/{chapter}": {
+      "get": {
+        "tags": ["Manga Details"],
+        "summary": "Konten gambar per chapter",
         "parameters": [
           {
             "name": "slug",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "name": "chapter",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "01"
           }
         ],
-        "responses": {
-          "200": { "description": "Berhasil" }
-        }
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/genre-all": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Semua daftar genre",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/genre/{slug}": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Komik berdasarkan genre (Halaman 1)",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "action"
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/genre/{slug}/{page}": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Komik berdasarkan genre (Pagination)",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/genre-rekomendasi": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Genre yang direkomendasikan",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/berwarna": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Daftar komik berwarna (Halaman 1)",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/berwarna/page/{page}": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Daftar komik berwarna (Pagination)",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/komik-populer/all": {
+      "get": {
+        "tags": ["Popular"],
+        "summary": "Semua komik terpopuler",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/komik-populer/manga": {
+      "get": {
+        "tags": ["Popular"],
+        "summary": "Manga terpopuler",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/komik-populer/manhwa": {
+      "get": {
+        "tags": ["Popular"],
+        "summary": "Manhwa terpopuler",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/komik-populer/manhua": {
+      "get": {
+        "tags": ["Popular"],
+        "summary": "Manhua terpopuler",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/pustaka": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Daftar pustaka komik (Halaman 1)",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/pustaka/page/{page}": {
+      "get": {
+        "tags": ["Exploration"],
+        "summary": "Daftar pustaka komik (Pagination)",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
       }
     }
   }
