@@ -28,21 +28,21 @@
     }
   ],
   "paths": {
-    "/api/v1/terbaru": {
+    "/api/vumi/terbaru": {
       "get": {
         "tags": ["Main"],
         "summary": "Daftar komik terbaru",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/rekomendasi": {
+    "/api/vumi/rekomendasi": {
       "get": {
         "tags": ["Main"],
         "summary": "Daftar rekomendasi pilihan",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/search": {
+    "/api/vumi/search": {
       "get": {
         "tags": ["Main"],
         "summary": "Pencarian komik",
@@ -58,7 +58,7 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/detail-komik/{slug}": {
+    "/api/vumi/detail-komik/{slug}": {
       "get": {
         "tags": ["Manga Details"],
         "summary": "Detail informasi komik",
@@ -74,7 +74,7 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/baca-chapter/{slug}/{chapter}": {
+    "/api/vumi/baca-chapter/{slug}/{chapter}": {
       "get": {
         "tags": ["Manga Details"],
         "summary": "Konten gambar per chapter",
@@ -96,14 +96,14 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/genre-all": {
+    "/api/vumi/genre-all": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Semua daftar genre",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/genre/{slug}": {
+    "/api/vumi/genre/{slug}": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Komik berdasarkan genre (Halaman 1)",
@@ -119,7 +119,7 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/genre/{slug}/{page}": {
+    "/api/vumi/genre/{slug}/{page}": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Komik berdasarkan genre (Pagination)",
@@ -140,21 +140,21 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/genre-rekomendasi": {
+    "/api/vumi/genre-rekomendasi": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Genre yang direkomendasikan",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/berwarna": {
+    "/api/vumi/berwarna": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Daftar komik berwarna (Halaman 1)",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/berwarna/page/{page}": {
+    "/api/vumi/berwarna/page/{page}": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Daftar komik berwarna (Pagination)",
@@ -169,42 +169,42 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/komik-populer/all": {
+    "/api/vumi/komik-populer/all": {
       "get": {
         "tags": ["Popular"],
         "summary": "Semua komik terpopuler",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/komik-populer/manga": {
+    "/api/vumi/komik-populer/manga": {
       "get": {
         "tags": ["Popular"],
         "summary": "Manga terpopuler",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/komik-populer/manhwa": {
+    "/api/vumi/komik-populer/manhwa": {
       "get": {
         "tags": ["Popular"],
         "summary": "Manhwa terpopuler",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/komik-populer/manhua": {
+    "/api/vumi/komik-populer/manhua": {
       "get": {
         "tags": ["Popular"],
         "summary": "Manhua terpopuler",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/pustaka": {
+    "/api/vumi/pustaka": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Daftar pustaka komik (Halaman 1)",
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v1/pustaka/page/{page}": {
+    "/api/vumi/pustaka/page/{page}": {
       "get": {
         "tags": ["Exploration"],
         "summary": "Daftar pustaka komik (Pagination)",

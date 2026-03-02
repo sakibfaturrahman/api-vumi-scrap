@@ -43,7 +43,7 @@ const genreDetail = require("./routes/genre-detail");
 const genreRekomendasi = require("./routes/genre-rekomendasi");
 
 // --- Implementasi Routes dengan Prefix ---
-const prefix = "/api/v1";
+const prefix = "/api/vumi";
 
 app.use(`${prefix}/terbaru`, terbaruRoute);
 app.use(`${prefix}/detail-komik`, detailKomikRoute);
@@ -61,11 +61,11 @@ app.use(`${prefix}/genre`, genreDetail);
 app.get("/", (req, res) => {
   res.json({
     status: true,
-    message: "Welcome to VUMI (Mangaverse) Rest API",
+    message: "Welcome to VUMI (ComicVerse) Rest API",
     version: "1.0.0",
     docs: "/api-docs",
     endpoint_prefix: prefix,
-    author: "Sakib - Informatics Student",
+    author: "Kibbz Skibidi - Informatics Student",
   });
 });
 
