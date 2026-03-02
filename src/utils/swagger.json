@@ -3,7 +3,57 @@
   "info": {
     "title": "VUMI - Komiku Rest API",
     "version": "1.0.0",
-    "description": "Dokumentasi API Vumi"
+    "description": "Dokumentasi API untuk Aplikasi Reader Vumi"
   },
-  "paths": {}
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "Local Server"
+    }
+  ],
+  "paths": {
+    "/api/v1/terbaru": {
+      "get": {
+        "tags": ["Main"],
+        "summary": "Ambil daftar komik terbaru",
+        "responses": {
+          "200": { "description": "Berhasil mengambil data" }
+        }
+      }
+    },
+    "/api/v1/search": {
+      "get": {
+        "tags": ["Main"],
+        "summary": "Cari manga berdasarkan keyword",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Berhasil" }
+        }
+      }
+    },
+    "/api/v1/genre/{slug}": {
+      "get": {
+        "tags": ["Genre"],
+        "summary": "List komik berdasarkan genre",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Berhasil" }
+        }
+      }
+    }
+  }
 }

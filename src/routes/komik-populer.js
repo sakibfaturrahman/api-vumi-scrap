@@ -1,134 +1,55 @@
 const express = require("express");
 const router = express.Router();
-// Import controller dengan path relatif yang benar dari folder src/routes
-const {
-  komikPopuler,
-  rekomendasiManga,
-  rekomendasiManhwa,
-  rekomendasiManhua,
-} = require("../controllers/komikPopulerController");
+
+// Import controller (pastikan module.exports di controller berbentuk object)
+const populerController = require("../controllers/komikPopulerController");
 
 /**
  * @swagger
- * /komik-populer:
+ * /api/v1/komik-populer/all:
  *   get:
- *     summary: Get popular comics by category
- *     description: Returns popular manga, manhwa, and manhua with their details
- *     tags:
- *       - Comics
+ *     summary: Get all popular comics
+ *     tags: [Comics]
  *     responses:
  *       200:
- *         description: Successfully retrieved popular comics
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 manga:
- *                   type: object
- *                   properties:
- *                     title:
- *                       type: string
- *                       example: "Manga Populer"
- *                     items:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           title:
- *                             type: string
- *                           originalLink:
- *                             type: string
- *                           apiDetailLink:
- *                             type: string
- *                           thumbnail:
- *                             type: string
- *                           genre:
- *                             type: string
- *                           readers:
- *                             type: string
- *                           latestChapter:
- *                             type: string
- *                           originalChapterLink:
- *                             type: string
- *                           apiChapterLink:
- *                             type: string
- *                           mangaSlug:
- *                             type: string
- *                           chapterNumber:
- *                             type: string
- *                 manhwa:
- *                   type: object
- *                   properties:
- *                     title:
- *                       type: string
- *                       example: "Manhwa Populer"
- *                     items:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           title:
- *                             type: string
- *                           originalLink:
- *                             type: string
- *                           apiDetailLink:
- *                             type: string
- *                           thumbnail:
- *                             type: string
- *                           genre:
- *                             type: string
- *                           readers:
- *                             type: string
- *                           latestChapter:
- *                             type: string
- *                           originalChapterLink:
- *                             type: string
- *                           apiChapterLink:
- *                             type: string
- *                           mangaSlug:
- *                             type: string
- *                           chapterNumber:
- *                             type: string
- *                 manhua:
- *                   type: object
- *                   properties:
- *                     title:
- *                       type: string
- *                       example: "Manhua Populer"
- *                     items:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           title:
- *                             type: string
- *                           originalLink:
- *                             type: string
- *                           apiDetailLink:
- *                             type: string
- *                           thumbnail:
- *                             type: string
- *                           genre:
- *                             type: string
- *                           readers:
- *                             type: string
- *                           latestChapter:
- *                             type: string
- *                           originalChapterLink:
- *                             type: string
- *                           apiChapterLink:
- *                             type: string
- *                           mangaSlug:
- *                             type: string
- *                           chapterNumber:
- *                             type: string
+ *         description: Success
  */
-router.get("/", komikPopuler);
+router.get("/all", populerController.getAllPopuler);
 
-router.get("/manga", rekomendasiManga);
-router.get("/manhwa", rekomendasiManhwa);
+/**
+ * @swagger
+ * /api/v1/komik-populer/manga:
+ *   get:
+ *     summary: Get popular Manga
+ *     tags: [Comics]
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get("/manga", populerController.getMangaPopuler);
 
-router.get("/manhua", rekomendasiManhua);
+/**
+ * @swagger
+ * /api/v1/komik-populer/manhwa:
+ *   get:
+ *     summary: Get popular Manhwa
+ *     tags: [Comics]
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get("/manhwa", populerController.getManhwaPopuler);
+
+/**
+ * @swagger
+ * /api/v1/komik-populer/manhua:
+ *   get:
+ *     summary: Get popular Manhua
+ *     tags: [Comics]
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get("/manhua", populerController.getManhuaPopuler);
 
 module.exports = router;
