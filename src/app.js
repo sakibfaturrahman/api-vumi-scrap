@@ -3,8 +3,8 @@ const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
 const path = require("path");
 
-// 1. Load JSON Documentation secara langsung (Gantikan JSDoc yang bermasalah)
-const swaggerDocument = require("./utils/swagger.json");
+// Load JSON Documentation secara langsung menggunakan path join agar aman di Vercel
+const swaggerDocument = require(path.join(__dirname, "./utils/swagger.json"));
 
 // Import Middleware
 const rateLimiter = require("../middleware/rateLimiter");
@@ -26,8 +26,24 @@ app.use(cors());
 app.use(express.json());
 app.use(rateLimiter);
 
-// 2. Setup Swagger UI menggunakan file JSON
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// --- Konfigurasi Asset Swagger via CDN (Solusi Blank Putih/Syntax Error) ---
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css";
+const swaggerOptions = {
+  customCssUrl: CSS_URL,
+  customJs: [
+    "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
+  ],
+  customSiteTitle: "VUMI API Docs",
+};
+
+// Setup Swagger UI
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, swaggerOptions),
+);
 
 // --- Import Routes ---
 const terbaruRoute = require("./routes/terbaru");
@@ -42,7 +58,7 @@ const genreAll = require("./routes/genre-all");
 const genreDetail = require("./routes/genre-detail");
 const genreRekomendasi = require("./routes/genre-rekomendasi");
 
-// --- Implementasi Routes dengan Prefix ---
+// --- Implementasi Routes dengan Prefix Custom ---
 const prefix = "/api/vumi";
 
 app.use(`${prefix}/terbaru`, terbaruRoute);
