@@ -26,8 +26,8 @@
       "description": "Endpoint utama untuk konten landing page dan pencarian"
     },
     {
-      "name": "Manga Details",
-      "description": "Informasi mendalam mengenai komik dan konten pembacaan chapter"
+      "name": "Comic Details",
+      "description": "Informasi mendalam mengenai komik (Manga, Manhwa, Manhua) dan konten pembacaan chapter"
     },
     {
       "name": "Exploration",
@@ -89,9 +89,9 @@
     },
     "/api/vumi/detail-komik/{slug}": {
       "get": {
-        "tags": ["Manga Details"],
+        "tags": ["Comic Details"],
         "summary": "Detail informasi komik",
-        "description": "Mengambil metadata lengkap, sinopsis, dan daftar chapter dari komik tertentu.",
+        "description": "Mengambil metadata lengkap, sinopsis, dan daftar chapter. Secara default mengakses kategori manga/manhwa sesuai ketersediaan di server.",
         "parameters": [
           {
             "name": "slug",
@@ -100,20 +100,23 @@
             "schema": {
               "type": "string"
             },
-            "example": "bocchi-the-rock",
-            "description": "Identifier unik komik"
+            "example": "kimetsu-no-yaiba-indonesia",
+            "description": "Identifier unik komik (slug)"
           }
         ],
         "responses": {
           "200": {
             "description": "Detail komik berhasil dimuat"
+          },
+          "500": {
+            "description": "Server Error (Cek ketersediaan URL scraping)"
           }
         }
       }
     },
     "/api/vumi/baca-chapter/{slug}/{chapter}": {
       "get": {
-        "tags": ["Manga Details"],
+        "tags": ["Comic Details"],
         "summary": "Konten gambar per chapter",
         "description": "Mengambil seluruh gambar dari chapter komik yang dipilih.",
         "parameters": [
