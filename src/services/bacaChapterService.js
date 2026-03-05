@@ -4,16 +4,32 @@ const { SOURCES } = require("../utils/constants");
 const { getHeaders } = require("../utils/headers");
 
 /**
- * Helper untuk mengekstrak slug dan chapter dari URL
+ * Helper untuk mengekstrak slug dan chapter dari URL Komiku
  */
 const extractSlugAndChapter = (url) => {
-  const matches =
-    url.match(/\/([^\/]+?)-chapter-([^\/]+?)(?:\/|$)/) ||
-    url.match(/\/manga\/[^\/]+\/chapter\/([^\/]+?)(?:\/|$)/);
+  if (!url) return { slug: "", chapter: "" };
 
-  if (matches && matches[1] && matches[2]) {
-    return { slug: matches[1], chapter: matches[2] };
+  // Regex diperkuat untuk menangkap pola slug sebelum '-chapter-'
+  const regex = /https?:\/\/komiku\.id\/([a-z0-9-]+)-chapter-([a-z0-9.]+)/i;
+  const matches = url.match(regex);
+
+  if (matches) {
+    return {
+      slug: matches[1],
+      chapter: matches[2],
+    };
   }
+
+  // Fallback untuk format slug-chapter-angka tanpa domain
+  const simpleRegex = /([a-z0-9-]+)-chapter-([a-z0-9.]+)/i;
+  const simpleMatches = url.match(simpleRegex);
+  if (simpleMatches) {
+    return {
+      slug: simpleMatches[1],
+      chapter: simpleMatches[2],
+    };
+  }
+
   return { slug: "", chapter: "" };
 };
 
@@ -21,78 +37,67 @@ const extractSlugAndChapter = (url) => {
  * Fungsi utama untuk scraping data chapter
  */
 const fetchChapterData = async (slug, chapter) => {
-  const URL_BASE = SOURCES.komiku || "https://komiku.org/";
-  const chapterUrl = `${URL_BASE}${slug}-chapter-${chapter}/`;
+  // 1. Definisikan Base URL dengan protokol yang lengkap
+  const URL_BASE = "https://komiku.org";
 
-  const { data } = await axios.get(chapterUrl, {
-    headers: getHeaders("komiku"),
-    timeout: 10000,
-  });
+  // 2. Bersihkan input slug dan chapter dari whitespace/karakter aneh
+  const cleanSlug = slug.trim();
+  const cleanChapter = chapter.toString().trim().replace(/^0+/, "") || "0";
 
-  const $ = cheerio.load(data);
+  // 3. Gabungkan URL dengan slash yang pasti (mencegah ENOTFOUND)
+  const chapterUrl = `${URL_BASE}/${cleanSlug}-chapter-${cleanChapter}/`;
 
-  // --- Ekstraksi Data Manga ---
-  const title = $("#Judul h1").text().trim();
-  const mangaTitleElement = $("#Judul p a b");
-  const mangaLink = mangaTitleElement.parent().attr("href");
+  console.log(`[VUMI DEBUG] Scraping URL: ${chapterUrl}`);
 
-  let mangaSlug = "";
-  if (mangaLink) {
-    const matches = mangaLink.match(/\/manga\/([^/]+)/);
-    mangaSlug = matches ? matches[1] : "";
-  }
+  try {
+    const { data } = await axios.get(chapterUrl, {
+      headers: getHeaders("komiku"),
+      timeout: 15000,
+    });
 
-  // --- Ekstraksi Gambar ---
-  const images = [];
-  $("#Baca_Komik img").each((i, el) => {
-    const src = $(el).attr("src");
-    if (src && src.includes("upload") && $(el).attr("id")) {
-      images.push({
-        src,
-        alt: $(el).attr("alt"),
-        id: $(el).attr("id"),
-        fallbackSrc: src.replace("cdn.komiku.id", "img.komiku.id"),
-      });
-    }
-  });
+    const $ = cheerio.load(data);
+    const images = [];
 
-  // --- Navigasi ---
-  const prevChapterLink = $(".nxpr a.rl[href*='-chapter-']").attr("href") || "";
-  const nextChapterLink = $(".nxpr a.rr[href*='-chapter-']").attr("href") || "";
+    // 4. Ambil gambar dengan penanganan Lazy Load (data-src)
+    $("#Baca_Komik img").each((i, el) => {
+      let src = $(el).attr("data-src") || $(el).attr("src");
 
-  const formatNav = (link) => {
-    if (!link) return null;
-    const { slug: s, chapter: c } = extractSlugAndChapter(link);
+      if (src && (src.includes("upload") || src.includes("cdn"))) {
+        // Normalisasi URL gambar
+        if (src.startsWith("//")) src = `https:${src}`;
+
+        images.push({
+          page: i + 1,
+          src: src,
+          alt: $(el).attr("alt") || `Page ${i + 1}`,
+          // Fallback server jika CDN utama lambat di HP Infinix kamu
+          fallbackSrc: src.replace("cdn.komiku.id", "img.komiku.id"),
+        });
+      }
+    });
+
+    // 5. Ekstraksi Navigasi (Prev/Next)
+    const prevLink = $(".nxpr a.rl").attr("href") || "";
+    const nextLink = $(".nxpr a.rr").attr("href") || "";
+
     return {
-      originalLink: link.startsWith("http")
-        ? link
-        : `${URL_BASE}${link.startsWith("/") ? link.substring(1) : link}`,
-      apiLink: `/api/v1/manga/read/${s}/${c}`,
-      slug: s,
-      chapter: c,
+      title:
+        $("#Judul h1").text().trim() || `${cleanSlug} Chapter ${cleanChapter}`,
+      slug: cleanSlug,
+      chapter: cleanChapter,
+      images: images,
+      navigation: {
+        prev: extractSlugAndChapter(prevLink).chapter || null,
+        next: extractSlugAndChapter(nextLink).chapter || null,
+      },
     };
-  };
-
-  return {
-    title,
-    mangaInfo: {
-      title: mangaTitleElement.text().trim(),
-      slug: mangaSlug,
-      apiLink: mangaSlug ? `/api/v1/manga/detail/${mangaSlug}` : null,
-    },
-    description: $("#Description").first().text().trim(), // Disederhanakan
-    images,
-    meta: {
-      chapterNumber: $(".chapterInfo").attr("valuechapter") || chapter,
-      totalImages:
-        parseInt($(".chapterInfo").attr("valuegambar")) || images.length,
-      publishDate: $("time").first().text().trim(),
-    },
-    navigation: {
-      prevChapter: formatNav(prevChapterLink),
-      nextChapter: formatNav(nextChapterLink),
-    },
-  };
+  } catch (error) {
+    // Memberikan log error detail agar mudah dilacak di Redmibook kamu
+    console.error(`[SCRAPE ERROR] URL: ${chapterUrl} | Msg: ${error.message}`);
+    throw new Error(
+      `Gagal memuat chapter. Pastikan slug '${cleanSlug}' benar.`,
+    );
+  }
 };
 
 module.exports = {

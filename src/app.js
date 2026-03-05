@@ -3,19 +3,15 @@ const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
 const path = require("path");
 
-// Load JSON Documentation secara langsung menggunakan path join agar aman di Vercel
+// Load JSON Documentation
 const swaggerDocument = require(path.join(__dirname, "./utils/swagger.json"));
 
 // Import Middleware
 const rateLimiter = require("../middleware/rateLimiter");
 
-// Penanganan error global
+// Penanganan error global agar server tidak mati total di Vercel
 process.on("uncaughtException", (err) => {
   console.error("Ada error yang tidak tertangkap:", err);
-});
-
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
 const app = express();
@@ -26,7 +22,7 @@ app.use(cors());
 app.use(express.json());
 app.use(rateLimiter);
 
-// --- Konfigurasi Asset Swagger via CDN (Solusi Blank Putih/Syntax Error) ---
+// --- Konfigurasi Asset Swagger ---
 const CSS_URL =
   "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css";
 const swaggerOptions = {
@@ -38,7 +34,6 @@ const swaggerOptions = {
   customSiteTitle: "VUMI API Docs",
 };
 
-// Setup Swagger UI
 app.use(
   "/api-docs",
   swaggerUi.serve,
@@ -58,9 +53,10 @@ const genreAll = require("./routes/genre-all");
 const genreDetail = require("./routes/genre-detail");
 const genreRekomendasi = require("./routes/genre-rekomendasi");
 
-// --- Implementasi Routes dengan Prefix Custom ---
+// --- Prefix Global ---
 const prefix = "/api/vumi";
 
+// --- Register Routes ---
 app.use(`${prefix}/terbaru`, terbaruRoute);
 app.use(`${prefix}/detail-komik`, detailKomikRoute);
 app.use(`${prefix}/baca-chapter`, bacaChapterRoute);
@@ -72,6 +68,14 @@ app.use(`${prefix}/rekomendasi`, rekomendasiRoute);
 app.use(`${prefix}/genre-all`, genreAll);
 app.use(`${prefix}/genre-rekomendasi`, genreRekomendasi);
 app.use(`${prefix}/genre`, genreDetail);
+
+// --- PENYESUAIAN PENTING: Backward Compatibility ---
+// Karena di Controller ada redirect ke /api/v1/manga/read (jika belum diubah),
+// atau jika ada aplikasi lama yang memanggil prefix v1, kita arahkan ke prefix vumi yang baru.
+app.get("/api/v1/manga/read/:slug/:chapter", (req, res) => {
+  const { slug, chapter } = req.params;
+  res.redirect(`${prefix}/baca-chapter/${slug}/${chapter}`);
+});
 
 // Root route
 app.get("/", (req, res) => {
@@ -85,11 +89,10 @@ app.get("/", (req, res) => {
   });
 });
 
-// Menjalankan Server (Hanya jika tidak di Vercel)
+// Menjalankan Server
 if (process.env.NODE_ENV !== "production") {
   app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
-    console.log(`Documentation available at http://localhost:${port}/api-docs`);
   });
 }
 
